@@ -58,9 +58,6 @@ class App extends React.Component {
         <Container>
           <Title>내 버킷리스트</Title>
           <Line />
-          {/* 컴포넌트를 넣어줍니다. */}
-          {/* <컴포넌트 명 [props 명]={넘겨줄 것(리스트, 문자열, 숫자, ...)}/> */}
-          {/* Route 쓰는 법 2가지를 모두 써봅시다! */}
           <Switch>
             <Route path="/" exact component={BucketList} />
             <Route path="/detail/:index" component={Detail} />
