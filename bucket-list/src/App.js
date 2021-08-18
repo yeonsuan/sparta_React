@@ -1,3 +1,4 @@
+
 import React from "react";
 
 import { withRouter } from "react-router";
@@ -8,13 +9,12 @@ import BucketList from "./BucketList";
 import styled from "styled-components";
 import Detail from "./Detail";
 import NotFound from "./NotFound";
-import Progress from "./Progress";
-
 
 // 리덕스 스토어와 연결하기 위해 connect라는 친구를 호출할게요!
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 // 리덕스 모듈에서 (bucket 모듈에서) 액션 생성 함수 두개를 가져올게요!
-import { loadBucket, createBucket } from './redux/modules/bucket';
+import {loadBucket, createBucket} from './redux/modules/bucket';
+import Progress from "./Progress";
 
 // 이 함수는 스토어가 가진 상태값을 props로 받아오기 위한 함수예요.
 const mapStateTopProps = (state) => ({
@@ -38,7 +38,7 @@ class App extends React.Component {
     super(props);
     // App 컴포넌트의 state를 정의해줍니다.
     this.state = {
-
+     
     };
     // ref는 이렇게 선언합니다!
     this.text = React.createRef();
@@ -48,7 +48,7 @@ class App extends React.Component {
   }
 
   addBucketList = () => {
-    const new_item = this.text.current.value;
+    const new_item = { text: this.text.current.value, compeleted: false};
     this.props.create(new_item);
   };
 
@@ -71,9 +71,13 @@ class App extends React.Component {
         </Container>
         {/* 인풋박스와 추가하기 버튼을 넣어줬어요. */}
         <Input>
+        
           <input type="text" ref={this.text} />
           <button onClick={this.addBucketList}>추가하기</button>
         </Input>
+        <button onClick={()=>{
+          window.scrollTo({top:0, left:0, behavior:"smooth"});
+        }}>위로가기</button>
       </div>
     );
   }
