@@ -8,11 +8,13 @@ import BucketList from "./BucketList";
 import styled from "styled-components";
 import Detail from "./Detail";
 import NotFound from "./NotFound";
+import Progress from "./Progress";
+
 
 // 리덕스 스토어와 연결하기 위해 connect라는 친구를 호출할게요!
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 // 리덕스 모듈에서 (bucket 모듈에서) 액션 생성 함수 두개를 가져올게요!
-import {loadBucket, createBucket} from './redux/modules/bucket';
+import { loadBucket, createBucket } from './redux/modules/bucket';
 
 // 이 함수는 스토어가 가진 상태값을 props로 받아오기 위한 함수예요.
 const mapStateTopProps = (state) => ({
@@ -36,14 +38,13 @@ class App extends React.Component {
     super(props);
     // App 컴포넌트의 state를 정의해줍니다.
     this.state = {
-     
+
     };
     // ref는 이렇게 선언합니다!
     this.text = React.createRef();
   }
 
   componentDidMount() {
-    console.log(this.props);
   }
 
   addBucketList = () => {
@@ -57,7 +58,11 @@ class App extends React.Component {
       <div className="App">
         <Container>
           <Title>내 버킷리스트</Title>
+          <Progress/>
           <Line />
+          {/* 컴포넌트를 넣어줍니다. */}
+          {/* <컴포넌트 명 [props 명]={넘겨줄 것(리스트, 문자열, 숫자, ...)}/> */}
+          {/* Route 쓰는 법 2가지를 모두 써봅시다! */}
           <Switch>
             <Route path="/" exact component={BucketList} />
             <Route path="/detail/:index" component={Detail} />
