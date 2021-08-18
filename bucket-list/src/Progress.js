@@ -1,36 +1,56 @@
+// 리액트 패키지를 불러옵니다.
 import React from "react";
-import styled from "styled-components"
+import styled from "styled-components";
 
-import {useSelector} from "react-redux";
+// redux hook을 불러옵니다.
+import { useDispatch, useSelector } from "react-redux";
+// 내가 만든 액션 생성 함수를 불러옵니다.
+import { deleteBucket, updateBucket } from "./redux/modules/bucket";
 
 const Progress = (props) => {
-    const bucket_list = useSelector(state => state.bucket.list);
-    let count = 0;
+  // 스토어에서 상태값 가져오기
+  const bucket_list = useSelector((state) => state.bucket.list);
+  
+  let count = 0;
 
-    bucket_list.map((l,idx)=>{
-        if(l.completed){
-            count++
-        }
-    })
+  let goal_per = bucket_list.map((l, idx) => {
+    if(l.completed){
+        count++;
+    }
+  });
 
-    return (
-        <ProgressBar>
-            <HighLight width={(count/bucket_list.length)*100 + "%"}/>
-        </ProgressBar>
-    );
-}
+  return (
+    <ProgressBar>
+      <HighLight width={(count / bucket_list.length) * 100 + "%"}></HighLight>
+      <Dot/>
+    </ProgressBar>
+  );
+};
 
 const ProgressBar = styled.div`
-background : #eee;
-width: 100%;
-height: 40px;
+  background: #eee;
+  width: 100%;
+  height: 20px;
+  display: flex; /*이거 막대기에 Dot 올릴때 쓰는 방법!!!!!!!!!!*/
+  border-radius: 10px; /*높이를 정렬하는 방법 - 막대기 중간으로 다트가 오게!!!!*/
+  align-items: center;
 `;
 
 const HighLight = styled.div`
-background: orange;
-height: 40px;
-width: ${props=>props.width};
-transition: width 1s;
+  background: #673ab7;
+  width: ${(props) => props.width};
+  height: 20px;
+  border-radius: 10px;
+  transition: 2s;
+`;
 
+const Dot = styled.div`
+  background: #fff;
+  border: 5px solid #673ab7;
+  box-sizing: border-box;
+  margin: 0px 0px 0px -10px; /*막대랑 겹치게 하는 방법*/
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
 `;
 export default Progress;

@@ -1,4 +1,3 @@
-
 import React from "react";
 
 import { withRouter } from "react-router";
@@ -71,12 +70,12 @@ class App extends React.Component {
         </Container>
         {/* 인풋박스와 추가하기 버튼을 넣어줬어요. */}
         <Input>
-        
           <input type="text" ref={this.text} />
           <button onClick={this.addBucketList}>추가하기</button>
         </Input>
-        <button onClick={()=>{
-          window.scrollTo({top:0, left:0, behavior:"smooth"});
+
+        <button onClick={() => {
+          window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
         }}>위로가기</button>
       </div>
     );
@@ -91,7 +90,31 @@ const Input = styled.div`
   margin: 20px auto;
   border-radius: 5px;
   border: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  & > * {
+    padding: 5px;
+  }
+
+  & input {
+    border-radius: 5px;
+    margin-right: 10px;
+    border: 1px solid #888;
+    width: 70%;
+    &:focus {
+      border: 1px solid #a673ff;
+    }
+  }
+
+  & button {
+    width: 25%;
+    color: #fff;
+    border: 1px solid #a673ff;
+    background-color: #a673ff;
+  }
 `;
+
 
 const Container = styled.div`
   max-width: 350px;
@@ -104,7 +127,7 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
-  color: slateblue;
+  color: #673ab7;
   text-align: center;
 `;
 
