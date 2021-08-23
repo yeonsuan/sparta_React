@@ -67,6 +67,42 @@ export const addBucketFB = (bucket) => {
   }
 }
 
+export const updatteBucketFB = (bucket) => {
+  return function (dispatch, getState) {
+    const _bucket_data = getState().bucket.list[bucket];
+
+    
+
+    let bucket_data = { ..._bucket_data, completed: true };
+
+    if(!bucket_data.id){
+      return;
+    }
+
+    bucket_db.doc(bucket_data.id).update(bucket_data).then(docRef => {
+      dispatch(updateBucket(bucket));
+    }).catch(error => {
+      console.log(error)
+    });
+  }
+}
+
+export const deleteBucketFB = (bucket) => {
+  return function (dispatch, getState) {
+    const _bucket_data = getState().bucket.list[bucket];
+
+    if(_bucket_data.id){
+      return;
+    }
+
+    bucket_db.doc(_bucket_data.id).delete().then(docRef => {
+      dispatch(deleteBucket(bucket));
+    }).catch(error => {
+      console.log(error);
+    });
+  }
+}
+
 // Reducer
 export default function reducer(state = initialState, action) {
 
@@ -84,7 +120,7 @@ export default function reducer(state = initialState, action) {
       const new_bucket_list = [
         ...state.list,
         action.bucket,
-        ];
+      ];
       return { list: new_bucket_list };
     }
 
