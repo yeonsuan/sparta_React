@@ -1,3 +1,10 @@
+//bucket.js
+import { firestore } from "../../firebase";
+
+const bucket_db = firestore.collection("bucket")
+
+//Actions
+
 const LOAD = "bucket/LOAD";
 const CREATE = "bucket/CREATE";
 const DELETE = "bucket/DELETE";
@@ -29,18 +36,55 @@ export const updateBucket = (bucket) => {
   return { type: UPDATE, bucket };
 };
 
+
+export const loadBucketFB = () => {
+  return function (dispatch) {
+
+    bucket_db.get().then((docs) => {
+      let bucket_data = [];
+
+      docs.forEach((doc) => {
+        if (doc.exists) {
+          bucket_data = [...bucket_data, { id: doc.id, ...doc.data() }]
+        }
+      })
+
+      console.log(bucket_data);
+      dispatch(loadBucket(bucket_data));
+    });
+  }
+}
+
+
+export const addBucketFB = (bucket) => {
+  return function (dispatch) {
+    let bucket_data = { text: bucket, completed: false };
+
+    bucket_db.add(bucket_data).then(docRef => {
+      bucket_data = { ...bucket_data, id: docRef.id };
+      dispatch(createBucket(bucket_data));
+    })
+  }
+}
+
 // Reducer
 export default function reducer(state = initialState, action) {
 
   switch (action.type) {
     // do reducer stuff
     case "bucket/LOAD": {
+      if (action.bucket.length > 0) {
+        return { list: action.bucket };
+      }
       return state;
     }
 
     case "bucket/CREATE": {
-      
-      const new_bucket_list = [...state.list, action.bucket];
+
+      const new_bucket_list = [
+        ...state.list,
+        action.bucket,
+        ];
       return { list: new_bucket_list };
     }
 
@@ -56,9 +100,9 @@ export default function reducer(state = initialState, action) {
     case "bucket/UPDATE": {
       const bucket_list = state.list.map((l, idx) => {
         if (idx === action.bucket) {
-        
+
           return { ...l, completed: true };
-        } 
+        }
 
         return l;
       });

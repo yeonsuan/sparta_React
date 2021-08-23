@@ -6,9 +6,8 @@ import styled from "styled-components";
 import Detail from "./Detail";
 import NotFound from "./NotFound";
 import { connect } from 'react-redux';
-import { loadBucket, createBucket } from './redux/modules/bucket';
+import { loadBucket, createBucket, loadBucketFB, addBucketFB } from './redux/modules/bucket';
 import Progress from "./Progress";
-
 import { firestore } from "./firebase";
 
 
@@ -19,11 +18,11 @@ const mapStateTopProps = (state) => ({
 // 이 함수는 값을 변화시키기 위한 액션 생성 함수를 props로 받아오기 위한 함수예요.
 const mapDispatchToProps = (dispatch) => ({
   load: () => {
-    dispatch(loadBucket());
+    dispatch(loadBucketFB());
   },
   create: (new_item) => {
     console.log(new_item);
-    dispatch(createBucket(new_item));
+    dispatch(addBucketFB(new_item));
   }
 });
 
@@ -40,44 +39,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    const bucket = firestore.collection("buckets"); /*firestore에서 콜렉션 버킷에 접근한 셈*/
-
-    bucket.doc("bucket_item").set({ text: "수영 배우기", completed: false })
-
-    // bucket.doc("bucket_item1").get().then((doc) => {
-    //   if (doc.exists) {
-    //     console.log(doc);
-    //     console.log(doc.data());
-    //     console.log(doc.id);
-    //   }
-    //   console.log(doc.exists)
-    // });
-
-    // bucket.get().then(docs => {
-    //   let bucket_data = [];
-
-
-    //   docs.forEach((doc) => {
-
-    //     if (doc.exists) {
-    //       bucket_data = [...bucket_data, { id: doc.id, ...doc.data() }];
-    //     }
-
-    //   });
-
-    //   console.log(bucket_data)
-    // });
-
-    // // bucket.add({text:"캘리그라피 배우기", completed: false}).then((docRef)=>{
-    // //   console.log(docRef);
-    // //   console.log(docRef.id);
-    // // });
-
-    // // bucket.doc("bucket_item1").update({ text: "수영 배우기2" });
-
-    // bucket.doc("bucket_item2").delete().then(docRef => {
-    //   console.log("지웠어요~!");
-    // });
+    this.props.load();
   }
 
   addBucketList = () => {
