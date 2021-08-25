@@ -11,12 +11,14 @@ import NotFound from "./NotFound";
 // 리덕스 스토어와 연결하기 위해 connect라는 친구를 호출할게요!
 import { connect } from "react-redux";
 // 리덕스 모듈에서 (bucket 모듈에서) 액션 생성 함수 두개를 가져올게요!
+
 import {
   loadBucket,
   createBucket,
   loadBucketFB,
   addBucketFB,
 } from "./redux/modules/bucket";
+
 import Progress from "./Progress";
 
 import Spinner from "./Spinner";
@@ -50,7 +52,7 @@ class App extends React.Component {
     this.text = React.createRef();
   }
 
-  componentDidMount() {
+  componentDidMount() {d
     this.props.load();
   }
 
