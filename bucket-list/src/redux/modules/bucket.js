@@ -1,158 +1,115 @@
-import React from "react";
-import { withRouter } from "react-router";
-import { Route, Switch } from "react-router-dom";
+//bucket.js
+import { firestore } from "../../firebase";
 
-// import [컴포넌트 명] from [컴포넌트가 있는 파일경로];
-import BucketList from "./BucketList";
-import styled from "styled-components";
-import Detail from "./Detail";
-import NotFound from "./NotFound";
+const bucket_db = firestore.collection("bucket");
 
-// 리덕스 스토어와 연결하기 위해 connect라는 친구를 호출할게요!
-import { connect } from "react-redux";
-// 리덕스 모듈에서 (bucket 모듈에서) 액션 생성 함수 두개를 가져올게요!
+// Actions
+const LOAD = "bucket/LOAD";
+const CREATE = "bucket/CREATE";
+const DELETE = "bucket/DELETE";
+const UPDATE = "bucket/UPDATE";
 
-import {
-  loadBucket,
-  createBucket,
-  loadBucketFB,
-  addBucketFB,
-} from "./redux/modules/bucket";
+const initialState = {
+  //   list: ["영화관 가기", "매일 책읽기", "수영 배우기"],
+  list: [
+    { text: "영화관 가기", completed: false },
+    { text: "매일 책읽기", completed: false },
+    { text: "수영 배우기", completed: false },
+  ],
+};
 
-import Progress from "./Progress";
+// Action Creators
+export const loadBucket = (bucket) => {
+  return { type: LOAD, bucket };
+};
 
-import Spinner from "./Spinner";
-// firestore 가져오기
-import { firestore } from "./firebase";
+export const createBucket = (bucket) => {
+  return { type: CREATE, bucket };
+};
 
-// 이 함수는 스토어가 가진 상태값을 props로 받아오기 위한 함수예요.
-const mapStateTopProps = (state) => ({
-  bucket_list: state.bucket.list,
-  is_loaded: state.bucket.is_loaded,
-});
+export const deleteBucket = (bucket) => {
+  return { type: DELETE, bucket };
+};
 
-// 이 함수는 값을 변화시키기 위한 액션 생성 함수를 props로 받아오기 위한 함수예요.
-const mapDispatchToProps = (dispatch) => ({
-  load: () => {
-    dispatch(loadBucketFB());
-  },
-  create: (new_item) => {
-    console.log(new_item);
-    dispatch(addBucketFB(new_item));
-  },
-});
+export const updateBucket = (bucket) => {
+  return { type: UPDATE, bucket };
+};
 
-// 클래스형 컴포넌트는 이렇게 생겼습니다!
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    // App 컴포넌트의 state를 정의해줍니다.
-    this.state = {};
-    // ref는 이렇게 선언합니다!
-    this.text = React.createRef();
-  }
+export const loadBucketFB = () => {
+  return function (dispatch) {
 
-  componentDidMount() {d
-    this.props.load();
-  }
+    bucket_db.get().then((docs) => {
+      let bucket_data = [];
 
-  addBucketList = () => {
-    const new_item = this.text.current.value;
-    this.props.create(new_item);
-  };
+      docs.forEach((doc) => {
+        if (doc.exists) {
+          bucket_data = [...bucket_data, { id: doc.id, ...doc.data() }];
+        }
+      });
 
-  // 랜더 함수 안에 리액트 엘리먼트를 넣어줍니다!
-  render() {
-    // 콘솔로 확인해요!
-    console.log(this.props.is_loaded);
-    return (
-      <div className="App">
-        <Container>
-          <Title>내 버킷리스트</Title>
-          {/* firestore에서 데이터를 가져온 후에만 페이지를 보여줄거예요!  */}
-          {!this.props.is_loaded ? (
-            <Spinner />
-          ) : (
-            <React.Fragment>
-              <Progress />
-              <Line />
-              <Switch>
-                <Route path="/" exact component={BucketList} />
-                <Route path="/detail/:index" component={Detail} />
-                <Route component={NotFound} />
-              </Switch>
-            </React.Fragment>
-          )}
-        </Container>
-        <Input>
-          <input type="text" ref={this.text} />
-          <button onClick={this.addBucketList}>추가하기</button>
-        </Input>
-
-        <button
-          onClick={() => {
-            window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-          }}
-        >
-          위로가기
-        </button>
-      </div>
-    );
+      console.log(bucket_data)
+      dispatch(loadBucket(bucket_data));
+    });
   }
 }
 
-const Input = styled.div`
-  max-width: 350px;
-  min-height: 10vh;
-  background-color: #fff;
-  padding: 16px;
-  margin: 20px auto;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  & > * {
-    padding: 5px;
-  }
+export const addBucketFB = (bucket) => {
+  return function (dispatch) {
+    let bucket_data = { text: bucket, completed: false };
 
-  & input {
-    border-radius: 5px;
-    margin-right: 10px;
-    border: 1px solid #888;
-    width: 70%;
-    &:focus {
-      border: 1px solid #a673ff;
+    bucket_db.add(bucket_data).then(docRef => {
+      bucket_data = { ...bucket_data, id: docRef.id };
+      dispatch(createBucket(bucket_data));
+    })
+  }
+}
+
+
+
+// Reducer
+export default function reducer(state = initialState, action) {
+
+  switch (action.type) {
+    // do reducer stuff
+    case "bucket/LOAD": {
+      if (action.bucket.lenght > 0) {
+        return { list: action.bucket };
+      }
+      return state;
     }
+
+    case "bucket/CREATE": {
+
+      const new_bucket_list = [
+        ...state.list, 
+        action.bucket,
+      ];
+      return { list: new_bucket_list };
+    }
+
+    case "bucket/DELETE": {
+      const bucket_list = state.list.filter((l, idx) => {
+        if (idx !== action.bucket) {
+          return l;
+        }
+      });
+      return { list: bucket_list };
+    }
+
+    case "bucket/UPDATE": {
+      const bucket_list = state.list.map((l, idx) => {
+        if (idx === action.bucket) {
+
+          return { ...l, completed: true };
+        }
+
+        return l;
+      });
+
+      return { list: bucket_list };
+    }
+
+    default:
+      return state;
   }
-
-  & button {
-    width: 25%;
-    color: #fff;
-    border: 1px solid #a673ff;
-    background-color: #a673ff;
-  }
-`;
-
-const Container = styled.div`
-  max-width: 350px;
-  min-height: 60vh;
-  background-color: #fff;
-  padding: 16px;
-  margin: 20px auto;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-`;
-
-const Title = styled.h1`
-  color: #673ab7;
-  text-align: center;
-`;
-
-const Line = styled.hr`
-  margin: 16px 0px;
-  border: 1px dotted #ddd;
-`;
-// withRouter 적용
-// connect로 묶어줬습니다!
-export default connect(mapStateTopProps, mapDispatchToProps)(withRouter(App));
+}

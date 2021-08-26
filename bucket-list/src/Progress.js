@@ -31,8 +31,8 @@ const ProgressBar = styled.div`
   background: #eee;
   width: 100%;
   height: 20px;
-  display: flex; /*이거 막대기에 Dot 올릴때 쓰는 방법!!!!!!!!!!*/
-  border-radius: 10px; /*높이를 정렬하는 방법 - 막대기 중간으로 다트가 오게!!!!*/
+  display: flex;
+  border-radius: 10px;
   align-items: center;
 `;
 
@@ -48,7 +48,7 @@ const Dot = styled.div`
   background: #fff;
   border: 5px solid #673ab7;
   box-sizing: border-box;
-  margin: 0px 0px 0px -10px; /*막대랑 겹치게 하는 방법*/
+  margin: 0px 0px 0px -10px;
   width: 40px;
   height: 40px;
   border-radius: 20px;

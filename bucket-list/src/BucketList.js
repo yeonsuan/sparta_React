@@ -1,4 +1,4 @@
-
+// 리액트 패키지를 불러옵니다.
 import React from "react";
 import styled from "styled-components";
 
