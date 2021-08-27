@@ -12,8 +12,7 @@ import NotFound from "./NotFound";
 // 리덕스 스토어와 연결하기 위해 connect라는 친구를 호출할게요!
 import {connect} from 'react-redux';
 // 리덕스 모듈에서 (bucket 모듈에서) 액션 생성 함수 두개를 가져올게요!
-import { loadBucket, createBucket, loadBucketFB, addBucketFB } from './redux/modules/bucket';
-import Progress from "./Progress";
+import {loadBucket, createBucket} from './redux/modules/bucket';
 
 // 이 함수는 스토어가 가진 상태값을 props로 받아오기 위한 함수예요.
 const mapStateTopProps = (state) => ({
@@ -23,10 +22,11 @@ const mapStateTopProps = (state) => ({
 // 이 함수는 값을 변화시키기 위한 액션 생성 함수를 props로 받아오기 위한 함수예요.
 const mapDispatchToProps = (dispatch) => ({
   load: () => {
-    dispatch(loadBucketFB());
+    dispatch(loadBucket());
   },
   create: (new_item) => {
-    dispatch(addBucketFB(new_item));
+    console.log(new_item);
+    dispatch(createBucket(new_item));
   }
 });
 
@@ -43,11 +43,10 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.props.load();
   }
 
   addBucketList = () => {
-    const new_item = { text: this.text.current.value, compeleted: false};
+    const new_item = this.text.current.value;
     this.props.create(new_item);
   };
 
@@ -57,7 +56,6 @@ class App extends React.Component {
       <div className="App">
         <Container>
           <Title>내 버킷리스트</Title>
-          <Progress/>
           <Line />
           {/* 컴포넌트를 넣어줍니다. */}
           {/* <컴포넌트 명 [props 명]={넘겨줄 것(리스트, 문자열, 숫자, ...)}/> */}
@@ -73,10 +71,6 @@ class App extends React.Component {
           <input type="text" ref={this.text} />
           <button onClick={this.addBucketList}>추가하기</button>
         </Input>
-
-        <button onClick={() => {
-          window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-        }}>위로가기</button>
       </div>
     );
   }
@@ -90,29 +84,6 @@ const Input = styled.div`
   margin: 20px auto;
   border-radius: 5px;
   border: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  & > * {
-    padding: 5px;
-  }
-
-  & input {
-    border-radius: 5px;
-    margin-right: 10px;
-    border: 1px solid #888;
-    width: 70%;
-    &:focus {
-      border: 1px solid #a673ff;
-    }
-  }
-
-  & button {
-    width: 25%;
-    color: #fff;
-    border: 1px solid #a673ff;
-    background-color: #a673ff;
-  }
 `;
 
 const Container = styled.div`
@@ -126,7 +97,7 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
-  color: #673ab7;
+  color: slateblue;
   text-align: center;
 `;
 
